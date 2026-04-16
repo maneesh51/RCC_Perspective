@@ -17,7 +17,10 @@ from tqdm import tqdm
 # CONFIG
 # ══════════════════════════════════════════════════════════════════════
 
-YOUR_EMAIL  = "...v@tu-berlin.de"
+#semantic scholar api -> was not responding reliably in my tests, so switched to OpenAlex (see oa_search function below)
+# SEMANTIC_SCHOLAR_API = "https://api.semanticscholar.org/graph/v1"
+
+YOUR_EMAIL  = "manish.yadav@tu-berlin.de"
 OA_BASE     = "https://api.openalex.org"
 YEARS       = (2001, 2026)
 CACHE_RAW   = "rc_papers_raw.json"    # skip re-download
@@ -25,26 +28,32 @@ CACHE_CLEAN = "rc_papers_clean.json"  # skip re-filter
 OUTPUT_CSV  = "rc_papers.csv"         # ← the file you edit & plot from
 
 SEARCH_QUERIES = [
+    "reservoir computer",
     "reservoir computing",
     "echo state network",
-    "liquid state machine",
+    "liquid state machine"
 ]
 
 # ── RC relevance filter ───────────────────────────────────────────────
 RC_CORE_TERMS = [
-    "reservoir computing", "echo state network", "echo state networks",
-    "liquid state machine", "reservoir computer", "esn",
-    "lsm reservoir", "recurrent reservoir", "reservoir layer",
-    "reservoir dynamics", "reservoir neuron", "reservoir readout",
-    "reservoir model", "physical reservoir", "deep reservoir",
-    "next generation reservoir", "echo state property",
-    "spectral radius", "fading memory property",
+    "reservoir computing",
+    "echo state network",
+    "echo state networks",
+    "liquid state machine",
+    "reservoir computer",
+    "recurrent reservoir",
+    "reservoir readout",
+    "physical reservoir computing",
+    "deep reservoir computing",
+    "next generation reservoir computing",
+    "echo state property",
+    "fading memory property",
 ]
 
 # ── Subfield taxonomy (first match wins) ──────────────────────────────
 SUBFIELD_RULES = [
     ("Photonics & Optics",
-     ["photon","optical","optic","laser","opto","delay line",
+     ["photon","optical","optic","laser","opto","delay line", "delay-line",
       "fiber","mach-zehnder","electro-optic","silicon photonic"]),
 
     ("Physical & Hardware RC",
@@ -58,13 +67,14 @@ SUBFIELD_RULES = [
 
     ("Nonlinear Dynamics & Chaos",
      ["chaos","chaotic","lorenz","lyapunov","attractor",
-      "nonlinear dynamic","bifurcation","edge of chaos",
-      "dynamical system","mackey-glass","kuramoto"]),
+      "nonlinear dynamics","bifurcation","edge of chaos",
+      "dynamical system","mackey-glass","kuramoto", "nonlinearity", "oscillator",
+      "nonlinear system","nonlinearity", "transient dynamics", "transients"]),
 
     ("Neuroscience & Comp. Neuro",
      ["cortex","cortical","spiking","spike","neural microcircuit",
       "working memory","hippocampal","cerebellum","synaptic",
-      "biological plausib","in vivo","electrophysi"]),
+      "biological plausib","in vivo","electrophysi", "neuroscience", "neuronal network"]),
 
     ("Mathematics & Theory",
      ["universal approximation","fading memory","separation property",
@@ -84,15 +94,55 @@ SUBFIELD_RULES = [
      ["climate","weather","wind power","turbulence","ocean",
       "atmospher","geophysic","rainfall","flood","seismic","earthquake"]),
 
-    ("ML / Next-Gen RC",
-     ["deep learning","transformer","lstm","machine learning",
-      "next generation reservoir","transfer learning","hyperparameter"]),
+    ("Next-Gen RC",
+     ["next generation reservoir computer", "Next-Gen RC", "NG-RC"]),
+
 
     ("General RC / ESN Methods",
-     ["echo state","reservoir computing","readout","spectral radius",
+     ["echo state","reservoir computing", "ridge-regression" ,"spectral radius",
       "reservoir design","leaky integrator","esn","liquid state"]),
 ]
-DEFAULT_SUBFIELD = "Other / Interdisciplinary"
+DEFAULT_SUBFIELD = "General RC / ESN Methods"
+
+# ══════════════════════════════════════════════════════════════════════
+# Exclude papers that mention "reservoir" but are not about reservoir computing
+# 
+RC_EXCLUDE_TERMS = [
+    "petroleum reservoir",
+    "oil reservoir",
+    "gas reservoir",
+    "groundwater reservoir",
+    "water reservoir",
+    "geological reservoir",
+    "hydrocarbon reservoir",
+    "porous reservoir",
+    "reservoir simulation",
+    "reservoir characterization",
+    "reservoir management",
+    "reservoir pressure",
+    "reservoir fluid",
+    "reservoir rock",
+    "reservoir permeability",
+    "reservoir porosity",
+    "dam reservoir",
+    "slope erosion",
+    "soil",
+    "erosion",
+    "surface reservoir",
+    "reservoir network",        # hydrology/pipeline networks
+    "reservoir storage",        # hydrology
+    "reservoir inflow",         # hydrology
+    "reservoir operation",      # hydrology/water management
+    "reservoir routing",        # hydrology
+    "reservoir level",          # hydrology
+    "underground reservoir",    # geology
+    "aquifer reservoir",        # geology
+    "carbonate reservoir",      # petroleum
+    "sandstone reservoir",      # petroleum
+    "shale reservoir",          # petroleum
+    "tight reservoir",          # petroleum
+    "fractured reservoir",      # petroleum
+]
 
 # ══════════════════════════════════════════════════════════════════════
 # HELPERS
@@ -166,15 +216,27 @@ def dedup_title(papers):
     return out
 
 
+# def rc_relevant(paper):
+#     hay = (paper.get("title","") + " " + paper.get("abstract","")).lower()
+#     if any(t in hay for t in RC_CORE_TERMS): return True
+#     title = paper.get("title","").lower()
+#     if "reservoir" in title and any(w in title for w in
+#        ["computing","network","neural","learning","layer","computer","model"]):
+#         return True
+#     return False
+
 def rc_relevant(paper):
     hay = (paper.get("title","") + " " + paper.get("abstract","")).lower()
-    if any(t in hay for t in RC_CORE_TERMS): return True
-    title = paper.get("title","").lower()
-    if "reservoir" in title and any(w in title for w in
-       ["computing","network","neural","learning","layer","computer","model"]):
-        return True
-    return False
 
+    # hard exclusion first — kills geology/hydrology/petroleum false positives
+    if any(t in hay for t in RC_EXCLUDE_TERMS):
+        return False
+
+    # must match at least one RC core term
+    if any(t in hay for t in RC_CORE_TERMS):
+        return True
+
+    return False
 
 def classify(paper):
     fos = paper.get("fieldsOfStudy", "")
