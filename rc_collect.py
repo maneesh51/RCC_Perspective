@@ -154,7 +154,7 @@ def oa_search(query, year_from, year_to, per_page=200, max_pages=30):
         "filter":   f"publication_year:{year_from}-{year_to}",
         "per-page": per_page,
         "select":   ("id,title,publication_year,cited_by_count,"
-                     "primary_topic,abstract_inverted_index"),
+                     "primary_topic,abstract_inverted_index," "referenced_works,doi"),
         "mailto":   YOUR_EMAIL,
     }
     results, cursor, page = [], "*", 0
@@ -177,6 +177,83 @@ def oa_search(query, year_from, year_to, per_page=200, max_pages=30):
     pbar.close()
     return results
 
+def oa_concept_search(concept_id, year_from, year_to, per_page=200, max_pages=30):
+    params = {
+        "filter": f"concepts.id:{concept_id},publication_year:{year_from}-{year_to}",
+        "per-page": per_page,
+        "select": (
+            "id,title,publication_year,cited_by_count,"
+            "primary_topic,abstract_inverted_index,"
+            "referenced_works,doi"
+        ),
+        "mailto": YOUR_EMAIL,
+    }
+
+    results, cursor, page = [], "*", 0
+    pbar = tqdm(desc=f"  concept '{concept_id}'", unit=" papers")
+
+    while cursor and page < max_pages:
+        params["cursor"] = cursor
+        try:
+            r = requests.get(f"{OA_BASE}/works", params=params, timeout=30)
+            r.raise_for_status()
+            data = r.json()
+        except Exception as e:
+            print(f"\n  error: {e} — retry in 5s")
+            time.sleep(5)
+            continue
+
+        batch = data.get("results", [])
+        if not batch:
+            break
+
+        results.extend(batch)
+        pbar.update(len(batch))
+        cursor = data.get("meta", {}).get("next_cursor")
+        page += 1
+        time.sleep(0.12)
+
+    pbar.close()
+    return results
+
+def oa_citing_search(work_id, per_page=200, max_pages=30):
+    params = {
+        "filter": f"cites:{work_id}",
+        "per-page": per_page,
+        "select": (
+            "id,title,publication_year,cited_by_count,"
+            "primary_topic,abstract_inverted_index,"
+            "referenced_works,doi"
+        ),
+        "mailto": YOUR_EMAIL,
+    }
+
+    results, cursor, page = [], "*", 0
+    pbar = tqdm(desc=f"  citing '{work_id}'", unit=" papers")
+
+    while cursor and page < max_pages:
+        params["cursor"] = cursor
+        try:
+            r = requests.get(f"{OA_BASE}/works", params=params, timeout=30)
+            r.raise_for_status()
+            data = r.json()
+        except Exception as e:
+            print(f"\n  error: {e} — retry in 5s")
+            time.sleep(5)
+            continue
+
+        batch = data.get("results", [])
+        if not batch:
+            break
+
+        results.extend(batch)
+        pbar.update(len(batch))
+        cursor = data.get("meta", {}).get("next_cursor")
+        page += 1
+        time.sleep(0.12)
+
+    pbar.close()
+    return results
 
 def reconstruct_abstract(inv):
     if not inv: return ""
@@ -188,13 +265,18 @@ def normalise(work):
     topic  = work.get("primary_topic") or {}
     field  = topic.get("field",  {}).get("display_name", "")
     domain = topic.get("domain", {}).get("display_name", "")
+
     return {
-        "paperId":       work.get("id","").replace("https://openalex.org/",""),
-        "title":         work.get("title") or "",
-        "year":          work.get("publication_year"),
+        "paperId": work.get("id","").replace("https://openalex.org/",""),
+        "title": work.get("title") or "",
+        "year": work.get("publication_year"),
         "citationCount": work.get("cited_by_count", 0),
-        "abstract":      reconstruct_abstract(work.get("abstract_inverted_index")),
+        "abstract": reconstruct_abstract(work.get("abstract_inverted_index")),
         "fieldsOfStudy": "; ".join(f for f in [field, domain] if f),
+
+        # NEW
+        "doi": work.get("doi"),
+        "references": work.get("referenced_works", []),
     }
 
 
@@ -206,13 +288,21 @@ def dedup_id(papers):
     return out
 
 
-def dedup_title(papers):
-    def norm(t): return re.sub(r"[^a-z0-9]","",t.lower())[:60]
+def dedup_combined(papers):
+    def norm(t): return re.sub(r"[^a-z0-9]","",t.lower())[:80]
+
     seen, out = set(), []
+
     for p in papers:
-        k = norm(p.get("title",""))
-        if k and k not in seen:
-            seen.add(k); out.append(p)
+        if p.get("doi"):
+            key = p["doi"]
+        else:
+            key = norm(p.get("title",""))
+
+        if key and key not in seen:
+            seen.add(key)
+            out.append(p)
+
     return out
 
 
@@ -228,12 +318,16 @@ def dedup_title(papers):
 def rc_relevant(paper):
     hay = (paper.get("title","") + " " + paper.get("abstract","")).lower()
 
-    # hard exclusion first — kills geology/hydrology/petroleum false positives
+    # hard exclusion
     if any(t in hay for t in RC_EXCLUDE_TERMS):
         return False
 
-    # must match at least one RC core term
+    # strong match
     if any(t in hay for t in RC_CORE_TERMS):
+        return True
+
+    # fallback: ESN / LSM abbreviations
+    if re.search(r"\b(esn|lsm)\b", hay):
         return True
 
     return False
@@ -270,11 +364,37 @@ if __name__ == "__main__":
         for q in SEARCH_QUERIES:
             works = oa_search(q, YEARS[0], YEARS[1])
             raw.extend(works)
-            print(f"  -> {len(works):,} results"); time.sleep(1)
-        papers = dedup_title(dedup_id([normalise(w) for w in raw]))
+            print(f"  -> {len(works):,} results")
+            time.sleep(1)
+
+        # NEW: concept-based search (boost recall)
+        CONCEPT_ID = "C41008148"
+        concept_works = oa_concept_search(CONCEPT_ID, YEARS[0], YEARS[1])
+        raw.extend(concept_works)
+        print(f"  -> {len(concept_works):,} concept results")
+
+        # NEW: seed expansion FIRST
+        SEED_WORKS = [
+            "W1993031516",  # Jaeger
+            "W2123831432",  # Maass
+        ]
+
+        for wid in SEED_WORKS:
+            citing = oa_citing_search(wid)
+            raw.extend(citing)
+            print(f"  -> {len(citing):,} citing papers from {wid}")
+
+        # NOW deduplicate everything together
+        papers = dedup_combined(dedup_id([normalise(w) for w in raw]))
+
         print(f"\n{len(papers):,} unique papers after dedup")
-        with open(CACHE_RAW, "w") as f: json.dump(papers, f)
+
+        with open(CACHE_RAW, "w") as f:
+            json.dump(papers, f)
+
         print(f"Cached -> '{CACHE_RAW}'")
+
+
 
     # 2. Filter
     if os.path.exists(CACHE_CLEAN):
@@ -305,11 +425,8 @@ if __name__ == "__main__":
 
     # 4. Save CSV
     # landmark column is empty — YOU fill it in (put any text e.g. "yes" or a reason)
-    fields = [
-        "paperId", "title", "year", "citationCount", "cites_per_year",
-        "subfield", "fieldsOfStudy", "landmark",   # <- landmark column, all empty
-        "abstract"
-    ]
+    fields = ["paperId", "title", "year", "citationCount", "cites_per_year",
+        "subfield", "fieldsOfStudy", "doi", "landmark", "abstract"]
     for p in papers:
         p.setdefault("landmark", "")   # empty = not a landmark
 
