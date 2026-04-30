@@ -291,22 +291,23 @@ def merge_scopus_files(file_2000_2015, file_2016_2025):
     # RC relevance filter
     filtered = []
     for p in all_raw:
-        full_abs = p.pop("_abstract_full", p.get("abstract", ""))
-        if rc_relevant(p["title"], full_abs):
+        # full_abs = p.pop("_abstract_full", p.get("abstract", ""))
+        # if rc_relevant(p["title"], full_abs):
             filtered.append(p)
     print(f"  After RC filter        : {len(filtered):,}")
 
     # Dedup
-    seen, unique = set(), []
-    for p in filtered:
-        k = dedup_key(p.get("doi", ""), p.get("title", ""))
-        if k and k not in seen:
-            seen.add(k)
-            unique.append(p)
-    print(f"  After dedup            : {len(unique):,}")
+    # seen, unique = set(), []
+    # for p in filtered:
+    #     k = dedup_key(p.get("doi", ""), p.get("title", ""))
+    #     if k and k not in seen:
+    #         seen.add(k)
+    #         unique.append(p)
+    # print(f"  After dedup            : {len(unique):,}")
 
-    unique.sort(key=lambda x: int(x.get("year") or 0))
-    return unique
+    # unique.sort(key=lambda x: int(x.get("year") or 0))
+    # return unique
+    return filtered
 
 
 # ══════════════════════════════════════════════════════════════════════
