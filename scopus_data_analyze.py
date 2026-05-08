@@ -353,9 +353,9 @@ def load_landmarks(papers, landmark_csv):
                 "landmark_authors":  row.get("authors", ""),
             })
 
-    print(f"  Landmarks matched : {len(matched)}")
-    if unmatched:
-        print(f"  Landmarks injected: {len(unmatched)}  (not in Scopus dataset)")
+    # print(f"  Landmarks matched : {len(matched)}")
+    # if unmatched:
+    #     print(f"  Landmarks injected: {len(unmatched)}  (not in Scopus dataset)")
     return matched + unmatched
 
 
