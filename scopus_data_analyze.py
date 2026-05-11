@@ -62,7 +62,7 @@ SUBFIELD_COLORS = {
     "Photonics & Optics":          "mediumorchid", #"red",
     "Physical & Hardware RC":      "darkorange", #"green",
     "Quantum RC":                  "navy", #"blue",
-    "Nonlinear Dynamics & Chaos":  "firebrick", #"orange",
+    "Nonlinear Dynamics & Chaos":  "red", ##"firebrick", #"orange",
     "Neuroscience & Comp. Neuro":  "green", #"royalblue",
     "Mathematics & Theory":        "black",
     "Signal Processing & Comms":   "dimgray", #"darkviolet",
