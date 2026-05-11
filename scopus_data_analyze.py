@@ -59,17 +59,17 @@ OUTPUT_FIG1       = "rc_scopus_Fig1.png"
 # ══════════════════════════════════════════════════════════════════════
 
 SUBFIELD_COLORS = {
-    "Photonics & Optics":          "red",
-    "Physical & Hardware RC":      "green",
-    "Quantum RC":                  "blue",
-    "Nonlinear Dynamics & Chaos":  "orange",
-    "Neuroscience & Comp. Neuro":  "royalblue",
+    "Photonics & Optics":          "mediumorchid", #"red",
+    "Physical & Hardware RC":      "darkorange", #"green",
+    "Quantum RC":                  "navy", #"blue",
+    "Nonlinear Dynamics & Chaos":  "firebrick", #"orange",
+    "Neuroscience & Comp. Neuro":  "green", #"royalblue",
     "Mathematics & Theory":        "black",
-    "Signal Processing & Comms":   "darkviolet",
+    "Signal Processing & Comms":   "dimgray", #"darkviolet",
     "Control & Robotics":          "c",
-    "Climate & Earth Sciences":    "brown",
+    "Climate & Earth Sciences":    "blue",
     "Next-Gen RC":                 "deeppink",
-    "General RC / ESN Methods":    "dimgray",
+    "General RC / ESN Methods":    "y", #"dimgray",
 }
 SUBFIELD_ORDER = list(SUBFIELD_COLORS.keys())
 DEFAULT_SUBFIELD = "General RC / ESN Methods"
