@@ -1,0 +1,168 @@
+label, replace by
+mirasso c. r., mirasso c.r.
+mirasso c r, mirasso c.r.
+mirasso c., mirasso c.r.
+ohki t. a., ohki t.a.
+on explaining the surprising success of reservoir computing forecaster of chaos? The universal machine learning dynamical system with contrast to VAR and DMD, bollt e.
+ortega j., ortega j.-p.
+ortega j.p., ortega j.-p.
+ortega j. p., ortega j.-p.
+ortega j p, ortega j.-p.
+ortega j-p, ortega j.-p.
+park b.g., park b.-g.
+hinton g.e., hinton g.
+ploger p.g., ploger p.
+principe j., principe j.c.
+steil j., steil j.j.
+vapnik v.n., vapnik v.
+a tutorial on training recurrent neural networks, jaeger h.
+tutorial on training recurrent neural networks, jaeger h.
+covering bppt, jaeger h.
+covering bptt, jaeger h.
+rtrl, jaeger h.
+williams r., williams r.j.
+abarbanel h.d., abarbanel h.d.i.
+abarbanel h., abarbanel h.d.i.
+abarbanel h. d., abarbanel h.d.i.
+abarbanel h. d. i., abarbanel h.d.i.
+abarbanel h d, abarbanel h.d.i.
+abbott l., abbott l.f.
+abbott l. f., abbott l.f.
+abbott l f, abbott l.f.
+adams m., adams m.j.
+adams r. p., adams r.p.
+allwood d a, allwood d.a.
+barbosa w.a., barbosa w.a.s.
+barbosa w., barbosa w.a.s.
+barbosa w. a., barbosa w.a.s.
+barbosa w a s, barbosa w.a.s.
+barbosa w. a. s., barbosa w.a.s.
+bassett d. s., bassett d.s.
+bassett d s, bassett d.s.
+bienstman p, bienstman p.
+bishop c., bishop c.m.
+bishop c. m., bishop c.m.
+bollt e, bollt e.
+bollt e.m., bollt e.
+bollt e. m., bollt e.
+brunner d, brunner d.
+carroll t. l., carroll t.l.
+fischer i, fischer i.
+gauthier d. j., gauthier d.j.
+gauthier d., gauthier d.j.
+gauthier d j, gauthier d.j.
+ott e, ott e.
+nakajima k, nakajima k.
+massar s, massar s.
+jaeger h, jaeger h.
+jager h., jaeger h.
+herbert j., jaeger h.
+kiebel s., kiebel s.j.
+ang k.w., ang k.-w.
+bullmore e.t., bullmore e.
+chua l.o., chua l.
+friston k.j., friston k.
+gershenfeld n., gershenfeld n.a.
+han s.t., han s.-t.
+haykin s.s, haykin s.
+hramov a., hramov a.e.
+hu h., hu h.f.
+lai y.c., lai y.-c.
+lai y., lai y.-c.
+lai y. c., lai y.-c.
+lai y c, lai y.-c.
+lai y-c, lai y.-c.
+legenstein r.a., legenstein r.
+learning to forget:continual prediction with lstm, gers f.a.
+learning to forget: continual prediction with lstm, gers f.a.
+liew t.c., liew t.c.h.
+liew t. c. h., liew t.c.h.
+liew t c h, liew t.c.h.
+liew t c, liew t.c.h.
+liew t. c., liew t.c.h.
+li r.w., li r.-w.
+lee t.w., lee t.-w.
+lee j.s., lee j.-s.
+liu j.m., liu j.-m.
+lorenz e. n., lorenz e.n.
+lorenz e n, lorenz e.n.
+lorenz e., lorenz e.n.
+lu w. d., lu w.d.
+lu w., lu w.d.
+martens j.p., martens j.-p.
+martens j., martens j.-p.
+park j.h., park j.-h.
+pecora l., pecora l.m.
+pecora l. m., pecora l.m.
+salakhutdinov r.r., salakhutdinov r.
+siew c.k., siew c.-k.
+sontag e., sontag e.d.
+soriano m. c., soriano m.c.
+soriano m., soriano m.c.
+soriano m c, soriano m.c.
+soriano m c., soriano m.c.
+trefzer m., trefzer m.a.
+tseng t.-y., tseng t.y.
+turitsyn s.k., turitsyn s.
+wong h.-s.p., wong h.s.p.
+maass w, maass w.
+campenhout j., van campenhout j.
+campenhout j.v., van campenhout j.
+campenhout j.m.v., van campenhout j.
+lukosevicius m, lukosevicius m.
+lukoseviius m, lukosevicius m.
+ludge k, ludge k.
+lyon r.f., lyon r.
+girvan m, girvan m.
+glass l, glass l.
+gimzewski j., gimzewski j.k.
+gimzewski j. k., gimzewski j.k.
+gimzewski j k, gimzewski j.k.
+gimzewski j k., gimzewski j.k.
+haas h, haas h.
+hass h., haas h.
+hirose a, hirose a.
+lu w d, lu w.d.
+markram h, markram h.
+ricciardi c, ricciardi c.
+zambrini r, zambrini r.
+brown s a, brown s.a.
+elman j., elman j.l.
+haycock p., haycock p.w.
+haykin s.s., haykin s.
+kasabov n.k., kasabov n.
+kistler w., kistler w.m.
+kuncic z, kuncic z.
+liu s.c., liu s.-c.
+pedrelli l, pedrelli l.
+prokhorov d.v., prokhorov d.
+prucnal p. r., prucnal p.r.
+rossler o., rossler o.e.
+schrauwen b, schrauwen b.
+shrimali m. d., shrimali m.d.
+strogatz s. h., strogatz s.h.
+stroobandt d, stroobandt d.
+uchida a, uchida a.
+van der sande g, van der sande g.
+venayagamoorthy g., venayagamoorthy g.k.
+werbos p., werbos p.j.
+yorke j. a., yorke j.a.
+visualizing data using t-sne, van der maaten l.
+Identification method for a class of periodic discrete-time dynamic nonlinear systems based on Sinusoidal ESN, yao x.s.
+Brain-Inspired Wireless Communications: Where Reservoir Computing Meets MIMO-OFDM, Mosleh S.S.
+Artificial intelligence-enabled cellular networks: a critical path to beyond-5G and 6G, Shafin R.
+ca, aaaa a.
+corr, aaaa a.
+esann, aaaa a.
+ieee trans. circuits syst. i, aaaa a.
+ieee trans. circuits syst. ii, aaaa a.
+ieee trans. syst., aaaa a.
+ieee, aaaa a.
+man, aaaa a.
+ny, aaaa a.
+phys. d, aaaa a.
+phys. rev. a, aaaa a.
+phys. rev. e, aaaa a.
+proceedings of the csee, aaaa a.
+usa, aaaa a.
+ekf, aaaa a.
